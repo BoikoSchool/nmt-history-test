@@ -8,12 +8,12 @@ import { onAuthStateChanged } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import { Plus, Minus } from "lucide-react";
 
-// Шкала НМТ для математики
-const nmtMapMath = {
+// Шкала НМТ для англійська
+const nmtMapEng = {
   5: 100,
-  6: 108,
-  7: 115,
-  8: 123,
+  6: 109,
+  7: 118,
+  8: 125,
   9: 131,
   10: 134,
   11: 137,
@@ -26,67 +26,75 @@ const nmtMapMath = {
   18: 150,
   19: 151,
   20: 152,
-  21: 155,
-  22: 159,
-  23: 163,
-  24: 167,
-  25: 170,
-  26: 173,
-  27: 176,
-  28: 180,
-  29: 184,
-  30: 189,
-  31: 194,
+  21: 153,
+  22: 155,
+  23: 157,
+  24: 159,
+  25: 162,
+  26: 166,
+  27: 169,
+  28: 173,
+  29: 179,
+  30: 185,
+  31: 191,
   32: 200,
 };
 
-// Шкала НМТ для української мови
-const nmtMapUkr = {
-  7: 100,
-  8: 105,
-  9: 110,
-  10: 115,
-  11: 120,
-  12: 125,
-  13: 131,
-  14: 134,
-  15: 136,
-  16: 138,
-  17: 140,
-  18: 142,
-  19: 143,
-  20: 144,
-  21: 145,
-  22: 146,
-  23: 148,
-  24: 149,
-  25: 150,
-  26: 152,
-  27: 154,
-  28: 156,
-  29: 157,
-  30: 159,
-  31: 160,
-  32: 162,
-  33: 163,
-  34: 165,
-  35: 167,
-  36: 170,
-  37: 172,
-  38: 175,
-  39: 177,
-  40: 180,
-  41: 183,
-  42: 186,
-  43: 191,
-  44: 195,
-  45: 200,
+// Шкала НМТ для історії
+const nmtMapHis = {
+  8: 100,
+  9: 105,
+  10: 111,
+  11: 116,
+  12: 120,
+  13: 124,
+  14: 127,
+  15: 130,
+  16: 132,
+  17: 134,
+  18: 136,
+  19: 138,
+  20: 140,
+  21: 141,
+  22: 142,
+  23: 143,
+  24: 144,
+  25: 145,
+  26: 146,
+  27: 147,
+  28: 148,
+  29: 149,
+  30: 150,
+  31: 151,
+  32: 152,
+  33: 154,
+  34: 156,
+  35: 158,
+  36: 160,
+  37: 163,
+  38: 166,
+  39: 168,
+  40: 169,
+  41: 170,
+  42: 172,
+  43: 173,
+  44: 175,
+  45: 177,
+  46: 179,
+  47: 181,
+  48: 183,
+  49: 185,
+  50: 188,
+  51: 191,
+  52: 194,
+  53: 197,
+  54: 200,
 };
 
 // Повертає НМТ-бал для даного предмета й тестового балу
 const getNmtScore = (subject, testScore) => {
-  if (subject === "math") return nmtMapMath[testScore] ?? "н/д";
-  if (subject === "ukr") return nmtMapUkr[testScore] ?? "н/д";
+  if (subject === "history") return nmtMapHis[testScore] ?? "н/д";
+  if (subject === "eng") return nmtMapEng[testScore] ?? "н/д";
   return "н/д";
 };
 
@@ -100,7 +108,7 @@ const ResultsPage = () => {
   // Перевірка прав адміна
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (user) => {
-      if (user?.email === "admin@boiko.com.ua") {
+      if (user?.email === "admin2@boiko.com.ua") {
         setAuthorized(true);
       } else {
         setAuthorized(false);
@@ -115,7 +123,7 @@ const ResultsPage = () => {
     if (!authorized) return;
     (async () => {
       try {
-        const snap = await getDocs(collection(db, "userAnswers"));
+        const snap = await getDocs(collection(db, "userAnswers2"));
         const dataByEmail = {};
         snap.docs.forEach((doc) => {
           const { userEmail: email, score = {}, results = [] } = doc.data();
@@ -167,22 +175,21 @@ const ResultsPage = () => {
         <div className="space-y-4">
           {Object.entries(grouped).map(
             ([email, { score = {}, results = [] }]) => {
-              const mathScore = score.math ?? 0;
-              const ukrScore = score.ukr ?? 0;
+              const historyScore = score.history ?? 0;
+              const engScore = score.eng ?? 0;
 
               return (
                 <div key={email} className="bg-white shadow rounded-lg p-4">
                   <div className="flex justify-between items-center">
                     <div>
                       <p className="font-semibold">Email: {email}</p>
-                      {/* ОКРЕМО ВИВОДИМО ПОЛЯ math та ukr */}
                       <p>
-                        Математика: {mathScore} / 32 — шкала НМТ:{" "}
-                        {getNmtScore("math", mathScore)}
+                        Історія України: {historyScore} / 54 — шкала НМТ:{" "}
+                        {getNmtScore("history", historyScore)}
                       </p>
                       <p>
-                        Укр. мова: {ukrScore} / 45 — шкала НМТ:{" "}
-                        {getNmtScore("ukr", ukrScore)}
+                        Анг. мова: {engScore} / 32 — шкала НМТ:{" "}
+                        {getNmtScore("eng", engScore)}
                       </p>
                     </div>
                     <button
@@ -225,9 +232,9 @@ const ResultsPage = () => {
                               }
                             >
                               <td className="border px-4 py-2 text-center">
-                                {item.subject === "math"
-                                  ? "Математика"
-                                  : "Укр. мова"}
+                                {item.subject === "history"
+                                  ? "Історія України"
+                                  : "Анг. мова"}
                               </td>
                               <td className="border px-4 py-2 text-center">
                                 {item.questionId}

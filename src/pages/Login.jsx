@@ -17,7 +17,7 @@ export default function Login() {
     try {
       await createUserWithEmailAndPassword(auth, email, password);
       // Якщо реєструється адмін — одразу ведемо на /admin
-      if (email === "admin@boiko.com.ua") {
+      if (email === "admin2@boiko.com.ua") {
         navigate("/admin");
       } else {
         navigate("/test");
@@ -37,7 +37,7 @@ export default function Login() {
       const user = userCredential.user;
 
       // Якщо користувач є адміном — перенаправляємо на /admin
-      if (user.email === "admin@boiko.com.ua") {
+      if (user.email === "admin2@boiko.com.ua") {
         navigate("/admin");
       } else {
         navigate("/test");

@@ -21,7 +21,7 @@ const SingleChoiceQuestion = ({ question, onAnswer, selectedAnswer }) => {
         <img
           src={question.image}
           alt="Зображення до питання"
-          className="max-w-full h-50 rounded-md"
+          className="max-w-full h-100 rounded-md"
         />
       )}
 

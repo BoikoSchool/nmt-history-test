@@ -13,7 +13,7 @@ export default function AdminPanel() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const unsub = onSnapshot(doc(db, "testSession", "current"), (docSnap) => {
+    const unsub = onSnapshot(doc(db, "testSession2", "current"), (docSnap) => {
       if (docSnap.exists()) {
         const data = docSnap.data();
         setStatus(data.status);
@@ -43,7 +43,7 @@ export default function AdminPanel() {
 
         if (remaining === 0) {
           // Автоматичне завершення сесії
-          await updateDoc(doc(db, "testSession", "current"), {
+          await updateDoc(doc(db, "testSession2", "current"), {
             status: "waiting",
             startTimestamp: null,
             pausedDuration: 0,
@@ -74,7 +74,7 @@ export default function AdminPanel() {
 
   const handleStart = async () => {
     const now = Math.floor(Date.now() / 1000);
-    await updateDoc(doc(db, "testSession", "current"), {
+    await updateDoc(doc(db, "testSession2", "current"), {
       status: "started",
       startTimestamp: { seconds: now },
       pausedDuration: 0,
@@ -84,7 +84,7 @@ export default function AdminPanel() {
 
   const handlePause = async () => {
     const now = Math.floor(Date.now() / 1000);
-    await updateDoc(doc(db, "testSession", "current"), {
+    await updateDoc(doc(db, "testSession2", "current"), {
       status: "paused",
       lastPausedAt: now,
     });
@@ -93,7 +93,7 @@ export default function AdminPanel() {
   const handleResume = async () => {
     const now = Math.floor(Date.now() / 1000);
     const newPausedDuration = pausedDuration + (now - lastPausedAt);
-    await updateDoc(doc(db, "testSession", "current"), {
+    await updateDoc(doc(db, "testSession2", "current"), {
       status: "started",
       pausedDuration: newPausedDuration,
       lastPausedAt: null,
@@ -102,7 +102,7 @@ export default function AdminPanel() {
   };
 
   const handleWaiting = async () => {
-    await updateDoc(doc(db, "testSession", "current"), {
+    await updateDoc(doc(db, "testSession2", "current"), {
       status: "waiting",
       startTimestamp: null,
       pausedDuration: 0,

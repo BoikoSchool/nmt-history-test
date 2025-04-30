@@ -40,12 +40,12 @@ const formatTime = (seconds) => {
 const TestPage = () => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answersBySubject, setAnswersBySubject] = useState({
-    math: {},
-    ukr: {},
+    history: {},
+    eng: {},
   });
   const [questionsBySubject, setQuestionsBySubject] = useState({
-    math: [],
-    ukr: [],
+    history: [],
+    eng: [],
   });
   const [loading, setLoading] = useState(true);
   const [sessionStatus, setSessionStatus] = useState("loading");
@@ -57,7 +57,7 @@ const TestPage = () => {
   const [totalPoints, setTotalPoints] = useState({});
   const [hasSubmitted, setHasSubmitted] = useState(false);
   const [userEmail, setUserEmail] = useState(null);
-  const [subject, setSubject] = useState("math");
+  const [subject, setSubject] = useState("history");
 
   const questions = questionsBySubject[subject] || [];
   const answers = answersBySubject[subject] || {};
@@ -66,7 +66,7 @@ const TestPage = () => {
   useEffect(() => {
     const fetchQuestions = async (subjectToFetch) => {
       const collectionName =
-        subjectToFetch === "math" ? "questions" : "questionsUkr";
+        subjectToFetch === "history" ? "questionsHis" : "questionsEng";
       const snapshot = await getDocs(collection(db, collectionName));
       let data = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
 
@@ -90,13 +90,13 @@ const TestPage = () => {
       setLoading(false);
     };
 
-    fetchQuestions("math");
-    fetchQuestions("ukr");
+    fetchQuestions("history");
+    fetchQuestions("eng");
   }, []);
 
   useEffect(() => {
     const unsub = onSnapshot(
-      doc(db, "testSession", "current"),
+      doc(db, "testSession2", "current"),
       (docSnapshot) => {
         const data = docSnapshot.data();
         if (data) {
@@ -185,7 +185,7 @@ const TestPage = () => {
       return;
     }
 
-    const answerDocRef = doc(db, "userAnswers", user.uid);
+    const answerDocRef = doc(db, "userAnswers2", user.uid);
     const existing = await getDoc(answerDocRef);
     if (existing.exists()) {
       alert("Ви вже проходили тест.");
@@ -195,7 +195,7 @@ const TestPage = () => {
     const allResults = [];
     const scores = {};
 
-    for (const subj of ["math", "ukr"]) {
+    for (const subj of ["history", "eng"]) {
       const subjQuestions = questionsBySubject[subj] || [];
       const subjAnswers = answersBySubject[subj] || {};
       let subjPoints = 0;
@@ -257,11 +257,12 @@ const TestPage = () => {
             Дякуємо! Тест пройдено.
           </h2>
           <p className="text-lg text-gray-800">
-            Математика:{" "}
-            <span className="font-semibold">{totalPoints.math ?? 0}</span> балів
+            Історія України:{" "}
+            <span className="font-semibold">{totalPoints.history ?? 0}</span>{" "}
+            балів
             <br />
-            Українська мова:{" "}
-            <span className="font-semibold">{totalPoints.ukr ?? 0}</span> балів
+            Англійська мова:{" "}
+            <span className="font-semibold">{totalPoints.eng ?? 0}</span> балів
           </p>
         </div>
       </div>
@@ -294,25 +295,25 @@ const TestPage = () => {
         <div className="flex justify-center gap-4 my-4">
           <button
             onClick={() => {
-              setSubject("math");
+              setSubject("history");
               setCurrentQuestionIndex(0);
             }}
             className={`px-4 py-2 rounded-lg font-semibold ${
-              subject === "math" ? "bg-blue-600 text-white" : "bg-gray-200"
+              subject === "history" ? "bg-blue-600 text-white" : "bg-gray-200"
             }`}
           >
-            Математика
+            Історія України
           </button>
           <button
             onClick={() => {
-              setSubject("ukr");
+              setSubject("eng");
               setCurrentQuestionIndex(0);
             }}
             className={`px-4 py-2 rounded-lg font-semibold ${
-              subject === "ukr" ? "bg-blue-600 text-white" : "bg-gray-200"
+              subject === "eng" ? "bg-blue-600 text-white" : "bg-gray-200"
             }`}
           >
-            Українська мова
+            Англійська мова
           </button>
         </div>
 
