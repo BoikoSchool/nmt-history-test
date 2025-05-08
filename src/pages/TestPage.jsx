@@ -68,19 +68,26 @@ const TestPage = () => {
       const collectionName =
         subjectToFetch === "history" ? "questionsHis" : "questionsEng";
       const snapshot = await getDocs(collection(db, collectionName));
-      let data = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
 
-      const singleQuestions = data.filter((q) => q.type === "single");
-      const otherQuestions = data.filter((q) => q.type !== "single");
+      // Отримуємо дані з бази
+      let data = snapshot.docs.map((doc) => {
+        const docData = doc.data();
 
-      const shuffleArray = (arr) =>
-        arr
-          .map((item) => ({ item, sort: Math.random() }))
-          .sort((a, b) => a.sort - b.sort)
-          .map(({ item }) => item);
+        // Перемішуємо варіанти відповіді, якщо це питання типу 'single'
+        let options = docData.options;
+        if (docData.type === "single" && Array.isArray(options)) {
+          options = [...options].sort(() => Math.random() - 0.5);
+        }
 
-      const shuffledSingle = shuffleArray(singleQuestions);
-      data = [...shuffledSingle, ...otherQuestions];
+        return {
+          ...docData,
+          id: docData.id, // числовий id з бази
+          options,
+        };
+      });
+
+      // Сортуємо питання за числовим id
+      data.sort((a, b) => a.id - b.id);
 
       setQuestionsBySubject((prev) => ({ ...prev, [subjectToFetch]: data }));
       setAnswersBySubject((prev) => ({
